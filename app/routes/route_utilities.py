@@ -40,7 +40,7 @@ def get_models_with_filters(cls, filters=None, sort_parameter=None):
             if hasattr(cls, attribute):
                 query = query.where(getattr(cls, attribute).ilike(f"%{value}%"))
 
-
+    # wave 2 sorting
     if sort_parameter == "asc":
         query = query.order_by(cls.title.asc())
     elif sort_parameter == "desc":
@@ -50,4 +50,5 @@ def get_models_with_filters(cls, filters=None, sort_parameter=None):
 
     models = db.session.scalars(query)
     models_response = [model.to_dict() for model in models]
+
     return models_response

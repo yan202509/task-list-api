@@ -2,7 +2,7 @@ from flask import Blueprint, abort, request, Response
 from app.models.task import Task
 from .route_utilities import create_model, validate_model, get_models_with_filters
 from ..db import db
-
+from datetime import datetime
 
 # so we do not need to rewrite tasks_bp all the time
 bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks")
@@ -44,3 +44,22 @@ def delete_task(task_id):
 
     return Response(status=204, mimetype="application/json")
 
+
+@bp.patch("/<task_id>/mark_complete")
+def patch_task_mark_complete_with_timestamp(task_id):
+    task = validate_model(Task, task_id)
+
+    task.completed_at = datetime.now()
+    db.session.commit()
+
+    return Response(status=204, mimetype="application/json")
+
+
+@bp.patch("/<task_id>/mark_incomplete")
+def patch_task_mark_incomplete(task_id):
+    task = validate_model(Task, task_id)
+
+    task.completed_at = None
+    db.session.commit()
+
+    return Response(status=204, mimetype="application/json")
