@@ -1,6 +1,7 @@
 from flask import abort, make_response
 from ..db import db
 
+# just get one model with id
 def validate_model(cls, model_id):
     try:
         model_id = int(model_id)
@@ -30,7 +31,8 @@ def create_model(cls, model_data):
 
     return new_model.to_dict(), 201
 
-def get_models_with_filters(cls, filters=None):
+# get models with some same attribute/s
+def get_models_with_filters(cls, filters=None, sort_parameter=None):
     query = db.select(cls)
     
     if filters:
@@ -38,6 +40,14 @@ def get_models_with_filters(cls, filters=None):
             if hasattr(cls, attribute):
                 query = query.where(getattr(cls, attribute).ilike(f"%{value}%"))
 
-    models = db.session.scalars(query.order_by(cls.id))
+
+    if sort_parameter == "asc":
+        query = query.order_by(cls.title.asc())
+    elif sort_parameter == "desc":
+        query = query.order_by(cls.title.desc())
+    else:
+        query = query.order_by(cls.id)
+
+    models = db.session.scalars(query)
     models_response = [model.to_dict() for model in models]
     return models_response

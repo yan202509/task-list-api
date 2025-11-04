@@ -4,24 +4,27 @@ from .route_utilities import create_model, validate_model, get_models_with_filte
 from ..db import db
 
 
-tasks_bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks")
+# so we do not need to rewrite tasks_bp all the time
+bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks")
 
-@tasks_bp.post("")
+@bp.post("")
 def create_task():
     request_body = request.get_json()
     return create_model(Task, request_body)
 
 
-@tasks_bp.get("")
+@bp.get("")
 def get_task():
-    return get_models_with_filters(Task, request.args)
+    sort_parameter = request.args.get("sort")
+    return get_models_with_filters(Task, request.args, sort_parameter)
 
-@tasks_bp.get("/<task_id>")
+
+@bp.get("/<task_id>")
 def get_one_task(task_id):
     task = validate_model(Task, task_id)
     return task.to_dict()
 
-@tasks_bp.put("/<task_id>")
+@bp.put("/<task_id>")
 def update_task(task_id):
     task = validate_model(Task, task_id)
     request_body = request.get_json()
@@ -33,10 +36,11 @@ def update_task(task_id):
 
     return Response(status=204, mimetype="application/json") # 204 means No Content
 
-@tasks_bp.delete("/<task_id>")
+@bp.delete("/<task_id>")
 def delete_task(task_id):
     task = validate_model(Task, task_id)
     db.session.delete(task)
     db.session.commit()
 
     return Response(status=204, mimetype="application/json")
+
