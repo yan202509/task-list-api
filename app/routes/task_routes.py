@@ -3,6 +3,8 @@ from app.models.task import Task
 from .route_utilities import create_model, validate_model, get_models_with_filters
 from ..db import db
 from datetime import datetime
+import os
+import requests
 
 # so we do not need to rewrite tasks_bp all the time
 bp = Blueprint("tasks_bp", __name__, url_prefix="/tasks")
@@ -52,6 +54,21 @@ def patch_task_mark_complete_with_timestamp(task_id):
     task.completed_at = datetime.now()
     db.session.commit()
 
+    SLACK_BOT_TOKEN = os.environ.get("SLACK_BOT_TOKEN")
+
+    if SLACK_BOT_TOKEN:
+        url = "https://slack.com/api/chat.postMessage"
+        headers  = {
+            "Authorization": f"Bearer {SLACK_BOT_TOKEN}",
+            "Content-Type": "application/json"
+        }
+
+        data = {
+            "channel": "slack-api-testing",
+            "text": f"Someone just completed the task {task.title}"
+        }
+        requests.post(url, headers=headers, json=data)
+    
     return Response(status=204, mimetype="application/json")
 
 
