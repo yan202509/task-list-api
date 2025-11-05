@@ -80,3 +80,4 @@ def patch_task_mark_incomplete(task_id):
     db.session.commit()
 
     return Response(status=204, mimetype="application/json")
+
