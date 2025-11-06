@@ -75,12 +75,27 @@ def post_task_ids_to_goal(goal_id):
         }, 200
 
 
+# another approach 
+# @bp.get("/<goal_id>/tasks")
+# def get_tasks_for_specific_goal(goal_id):
+#     goal = validate_model(Goal, goal_id)
+
+#     tasks_list = [task.to_dict() for task in goal.tasks]
+
+#     return {
+#         "id": goal.id,
+#         "title": goal.title,
+#         "tasks": tasks_list
+#     }, 200
+
 
 @bp.get("/<goal_id>/tasks")
 def get_tasks_for_specific_goal(goal_id):
     goal = validate_model(Goal, goal_id)
 
-    tasks_list = [task.to_dict() for task in goal.tasks]
+    tasks_assign_to_goal = Task.query.filter_by(goal_id=goal.id).all()
+
+    tasks_list = [task.to_dict() for task in tasks_assign_to_goal]
 
     return {
         "id": goal.id,
