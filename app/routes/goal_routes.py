@@ -54,7 +54,7 @@ def post_task_ids_to_goal(goal_id):
     task_ids = request_body.get("task_ids", [])
 
     # use query to get all the tasks that is related to this one goal
-    # this is also use later, can make it into a helpfer function later
+    # goal.id is inside class Task Model
     tasks_assign_to_goal = Task.query.filter_by(goal_id=goal.id).all()
 
     # setting the goal_id to none
@@ -80,16 +80,10 @@ def post_task_ids_to_goal(goal_id):
 def get_tasks_for_specific_goal(goal_id):
     goal = validate_model(Goal, goal_id)
 
-    tasks_assign_to_goal = Task.query.filter_by(goal_id=goal.id).all()
-
-    # return as a dict
-    # all tha tasks inside goal
-    tasks_list = [task.to_dict() for task in tasks_assign_to_goal]
+    tasks_list = [task.to_dict() for task in goal.tasks]
 
     return {
         "id": goal.id,
         "title": goal.title,
         "tasks": tasks_list
     }, 200
-
-

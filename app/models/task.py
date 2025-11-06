@@ -32,9 +32,6 @@ class Task(db.Model):
 
 
 
-
-
-
     @classmethod
     def from_dict(cls, task_data):
 
