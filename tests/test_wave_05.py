@@ -156,12 +156,12 @@ def test_update_goal(client, one_goal):
 # @pytest.mark.skip(reason="test to be completed by student")
 def test_update_goal_not_found(client):
         # Act
-    response = client.get("/goals")
+    response = client.get("/goals/100")
     response_body = response.get_json()
 
     # Assert
-    assert response.status_code == 200
-    assert response_body == []
+    assert response.status_code == 404
+    assert response_body == {"message": "Goal 100 not found"}
 
 
 # @pytest.mark.skip(reason="No way to test this feature yet")

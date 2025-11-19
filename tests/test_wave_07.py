@@ -2,7 +2,7 @@ import pytest
 from werkzeug.exceptions import HTTPException
 from app.models.goal import Goal
 from app.models.task import Task
-from app.routes.route_utilities import validate_model, create_model, get_models_with_filters
+from app.routes.route_utilities import validate_model, create_model
 
 
 # @pytest.mark.skip(reason="No way to test this feature yet")
@@ -88,6 +88,10 @@ def test_route_utilities_validate_model_with_goal_missing_id(client, one_goal):
     #Act & Assert
     with pytest.raises(HTTPException) as e:
         result_task = validate_model(Goal, 4)
+    
+    response = e.value.get_response()
+    assert response.status_code == 404
+    assert response.get_json() == {"message": "Goal 4 not found"}
     
     # raise Exception("Complete test with assertion status code and response body")
     # *****************************************************************************
