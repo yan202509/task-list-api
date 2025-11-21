@@ -156,7 +156,7 @@ def test_update_goal(client, one_goal):
 # @pytest.mark.skip(reason="test to be completed by student")
 def test_update_goal_not_found(client):
         # Act
-    response = client.get("/goals/100")
+    response = client.put("/goals/100")
     response_body = response.get_json()
 
     # Assert
